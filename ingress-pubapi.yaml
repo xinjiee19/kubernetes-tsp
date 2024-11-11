@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-app
+  namespace: u-cptz2
+spec:
+  rules:
+  - host: django.girls.csc8567.luxbulb.org
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
+      - path: /public
+        pathType: Prefix
+        backend:
+          service:
+            name: public-service
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - django.girls.csc8567.luxbulb.org
+    secretName: tls-secret
