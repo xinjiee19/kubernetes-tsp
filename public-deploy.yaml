@@ -15,7 +15,19 @@ spec:
     spec:
       containers:
       - name: public-container
-        image: xinjie19/kubepub:v4
+        image: xinjie19/kubepub:v5
+        env:
+        - name: DB_NAME
+          value: "todolist"           # Nom de la base de données
+        - name: DB_USER
+          value: "xinjie"             # Nom d'utilisateur de la base de données
+        - name: DB_PASSWORD
+          value: "xinjie"             # Mot de passe de l'utilisateur
+        - name: DB_HOST
+          value: "dbservice"          # Nom du service de la base de données
+        - name: DB_PORT
+          value: "5432"               # Port de la base de données
+        command: ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
         resources:
           requests:
             cpu: "100m"
