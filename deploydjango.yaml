@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploydjango
+  namespace: u-cptz2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: app-container
+        image: xinjie19/kubeapipub:v8
+        ports:
+          - containerPort: 8000
+        env:
+          - name: POSTGRES_USER
+            value: "xinjie"
+          - name: POSTGRES_PASSWORD
+            value: "xinjie"
+          - name: DB_HOST
+            value: "dbservice"
+          - name: POSTGRES_DB
+            value: "todolist"
+        command: ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "100Mi"
+          limits:
+            cpu: "200m"
+            memory: "200Mi"
+

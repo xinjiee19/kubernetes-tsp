@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-django
+  namespace: u-cptz2
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: django.girls.csc8567.luxbulb.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: servicedjango   # Nom de service Django
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - django.girls.csc8567.luxbulb.org
+    secretName: tls-secret   # Utilisé pour le HTTPS
+

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  namespace: u-cptz2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: app-container
+        image: xhelozs/csc8567:v1
+        resources:
+          requests:
+            cpu: "100m"    # 1/10 de CPU
+            memory: "100Mi"  # 100 Mo de RAM
+          limits:
+            cpu: "200m"    # 1/5 de CPU
+            memory: "200Mi"  # 200 Mo de RAM
+

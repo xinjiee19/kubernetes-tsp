@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dbservice
+  namespace: u-cptz2
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432  # Le port sur lequel PostgreSQL écoute
+      targetPort: 5432
+  type: ClusterIP
+
