@@ -1,0 +1,44 @@
+{{- range $key, $value := .Values.deployments }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $value.name | quote }}
+  namespace: {{ $.Values.namespace | quote }}
+  labels:
+    app: {{ $value.appLabel | quote }}
+spec:
+  replicas: {{ $value.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ $value.appLabel }}
+  template:
+    metadata:
+      labels:
+        app: {{ $value.appLabel }}
+    spec:
+      containers:
+      - name: {{ $key }}-container
+        image: {{ $value.image | quote }}
+        env:
+        - name: DB_NAME
+          value: "{{ $.Values.database.name }}"
+        - name: DB_USER
+          value: "{{ $.Values.database.user }}"
+        - name: DB_PASSWORD
+          value: "{{ $.Values.database.password }}"
+        - name: DB_HOST
+          value: "{{ $.Values.database.host }}"
+        - name: DB_PORT
+          value: "{{ $.Values.database.port }}"
+        command:
+        - sh
+        - -c
+        - python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+        resources:
+          requests:
+            cpu: {{ $value.resources.requests.cpu | quote }}
+            memory: {{ $value.resources.requests.memory | quote }}
+          limits:
+            cpu: {{ $value.resources.limits.cpu | quote }}
+            memory: {{ $value.resources.limits.memory | quote }}
+{{- end }}

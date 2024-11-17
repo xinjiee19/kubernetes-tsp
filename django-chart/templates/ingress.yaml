@@ -1,42 +1,35 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-app
-  namespace: u-cptz2
+  name: {{ .Values.ingress.name }}
+  namespace: {{ .Values.namespace }}
 spec:
   rules:
-  - host: django.girls.csc8567.luxbulb.org
+  - host: {{ .Values.ingress.host }}
     http:
       paths:
       - path: /api
         pathType: Prefix
         backend:
           service:
-            name: api-service
+            name: {{ .Values.deployments.api.serviceName }}
             port:
               number: 80
       - path: /public
         pathType: Prefix
         backend:
           service:
-            name: public-service
+            name: {{ .Values.deployments.public.serviceName }}
             port:
               number: 80
       - path: /static
         pathType: Prefix
         backend:
           service:
-            name: public-service
-            port:
-              number: 80
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: public-service
+            name: {{ .Values.deployments.public.serviceName }}
             port:
               number: 80
   tls:
   - hosts:
-    - django.girls.csc8567.luxbulb.org
-    secretName: tls-secret
+    - {{ .Values.ingress.host }}
+    secretName: {{ .Values.ingress.tlsSecret }}

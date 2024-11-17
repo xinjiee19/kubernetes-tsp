@@ -1,0 +1,74 @@
+
+namespace: u-cptz2
+
+database:
+  name: todolist
+  user: xinjie
+  password: xinjie
+  host: dbservice
+  port: "5432"
+
+deployments:
+  api:
+    name: api-deploy
+    appLabel: api
+    image: xinjie19/kubeapi:v5
+    replicas: 3
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "100Mi"
+      limits:
+        cpu: "200m"
+        memory: "200Mi"
+    serviceName: api-service  
+
+  public:
+    name: public-deploy
+    appLabel: public
+    image: xinjie19/kubepub:v5
+    replicas: 3
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "100Mi"
+      limits:
+        cpu: "200m"
+        memory: "200Mi"
+    serviceName: public-service  
+
+ingress:
+  name: ingress-app
+  host: django.girls.csc8567.luxbulb.org
+  tlsSecret: tls-secret
+
+service:
+  type: ClusterIP
+  port: 80
+  name: django-service
+
+serviceAccount:
+  create: true
+  name: ""
+  automount: true
+  annotations: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 75
+
+configmap:
+  name: django-configmap
+  database:
+    name: todolist
+    user: xinjie
+    host: dbservice
+    port: "5432"
+
+serviceaccount:
+  create: false               
+  name: default               
+  automount: true             

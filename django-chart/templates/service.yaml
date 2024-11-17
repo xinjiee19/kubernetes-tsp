@@ -1,0 +1,29 @@
+# API Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.deployments.api.serviceName }}  
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Values.deployments.api.appLabel }}  
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
+---
+# Public Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.deployments.public.serviceName }}  
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Values.deployments.public.appLabel }} 
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
