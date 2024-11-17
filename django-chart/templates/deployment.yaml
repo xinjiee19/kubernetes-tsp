@@ -21,15 +21,27 @@ spec:
         image: {{ $value.image | quote }}
         env:
         - name: DB_NAME
-          value: "{{ $.Values.database.name }}"
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_NAME
         - name: DB_USER
-          value: "{{ $.Values.database.user }}"
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_USER
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_PORT
         - name: DB_PASSWORD
           value: "{{ $.Values.database.password }}"
-        - name: DB_HOST
-          value: "{{ $.Values.database.host }}"
-        - name: DB_PORT
-          value: "{{ $.Values.database.port }}"
         command:
         - sh
         - -c
