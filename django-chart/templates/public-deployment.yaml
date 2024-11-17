@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployments.public.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.deployments.public.appLabel }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/name: public
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: {{ .Values.deployments.public.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.deployments.public.appLabel }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.deployments.public.appLabel }}
+    spec:
+      containers:
+      - name: public-container
+        image: {{ .Values.deployments.public.image }}
+        env:
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_NAME
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_USER
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_PORT
+        - name: DB_PASSWORD
+          value: "{{ .Values.database.password }}"
+        command:
+        - sh
+        - -c
+        - python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+        resources:
+          requests:
+            cpu: {{ .Values.deployments.public.resources.requests.cpu }}
+            memory: {{ .Values.deployments.public.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.deployments.public.resources.limits.cpu }}
+            memory: {{ .Values.deployments.public.resources.limits.memory }}

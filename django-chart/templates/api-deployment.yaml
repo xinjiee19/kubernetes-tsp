@@ -1,24 +1,27 @@
-{{- range $key, $value := .Values.deployments }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $value.name | quote }}
-  namespace: {{ $.Values.namespace | quote }}
+  name: {{ .Values.deployments.api.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: {{ $value.appLabel | quote }}
+    app: {{ .Values.deployments.api.appLabel }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/name: api
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
 spec:
-  replicas: {{ $value.replicas | default 1 }}
+  replicas: {{ .Values.deployments.api.replicas }}
   selector:
     matchLabels:
-      app: {{ $value.appLabel }}
+      app: {{ .Values.deployments.api.appLabel }}
   template:
     metadata:
       labels:
-        app: {{ $value.appLabel }}
+        app: {{ .Values.deployments.api.appLabel }}
     spec:
       containers:
-      - name: {{ $key }}-container
-        image: {{ $value.image | quote }}
+      - name: api-container
+        image: {{ .Values.deployments.api.image }}
         env:
         - name: DB_NAME
           valueFrom:
@@ -41,16 +44,15 @@ spec:
               name: db-config
               key: DB_PORT
         - name: DB_PASSWORD
-          value: "{{ $.Values.database.password }}"
+          value: "{{ .Values.database.password }}"
         command:
         - sh
         - -c
         - python manage.py migrate && python manage.py runserver 0.0.0.0:8000
         resources:
           requests:
-            cpu: {{ $value.resources.requests.cpu | quote }}
-            memory: {{ $value.resources.requests.memory | quote }}
+            cpu: {{ .Values.deployments.api.resources.requests.cpu }}
+            memory: {{ .Values.deployments.api.resources.requests.memory }}
           limits:
-            cpu: {{ $value.resources.limits.cpu | quote }}
-            memory: {{ $value.resources.limits.memory | quote }}
-{{- end }}
+            cpu: {{ .Values.deployments.api.resources.limits.cpu }}
+            memory: {{ .Values.deployments.api.resources.limits.memory }}

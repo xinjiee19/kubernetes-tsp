@@ -60,14 +60,6 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 75
 
-configmap:
-  name: django-configmap
-  database:
-    name: todolist
-    user: xinjie
-    host: dbservice
-    port: "5432"
-
 serviceaccount:
   create: false               
   name: default               

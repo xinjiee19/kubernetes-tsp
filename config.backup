@@ -20,7 +20,7 @@ clusters:
 users:
 - name: "csc8567"
   user:
-    token: "kubeconfig-u-cptz26k2jt:x7nrj8nd4mtb2vskjz95twp2kjkhrs8qhmdgrvbs5jtxrkjnw2nxh7"
+    token: "kubeconfig-u-cptz2f6wpr:59tqdj9gf7l4pp8mrz9drzkgp8q568jbznpprn5pzslncfmf7gvx86"
 
 
 contexts:

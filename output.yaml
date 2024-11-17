@@ -1,0 +1,224 @@
+---
+# Source: django-chart/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-config
+  namespace: u-cptz2
+data:
+  DB_NAME: "todolist"
+  DB_USER: "xinjie"
+  DB_HOST: "dbservice"
+  DB_PORT: "5432"
+---
+# Source: django-chart/templates/service.yaml
+# API Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service  
+  namespace: u-cptz2
+spec:
+  selector:
+    app: api  
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
+---
+# Source: django-chart/templates/service.yaml
+# Public Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: public-service  
+  namespace: u-cptz2
+spec:
+  selector:
+    app: public 
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
+---
+# Source: django-chart/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deploy
+  namespace: u-cptz2
+  labels:
+    app: api
+    helm.sh/chart: "django-chart-0.1.0"
+    app.kubernetes.io/name: api
+    app.kubernetes.io/instance: django-girls
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+        release: django-girls
+        debug-key: "api"
+    spec:
+      containers:
+      - name: api-container
+        image: xinjie19/kubeapi:v5
+        env:
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_NAME
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_USER
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_PORT
+        - name: DB_PASSWORD
+          value: "xinjie"
+        command:
+        - sh
+        - -c
+        - python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 200m
+            memory: 200Mi
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: public-deploy
+  namespace: u-cptz2
+  labels:
+    app: public
+    helm.sh/chart: "django-chart-0.1.0"
+    app.kubernetes.io/name: public
+    app.kubernetes.io/instance: django-girls
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: public
+  template:
+    metadata:
+      labels:
+        app: public
+        release: django-girls
+        debug-key: "public"
+    spec:
+      containers:
+      - name: public-container
+        image: xinjie19/kubepub:v5
+        env:
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_NAME
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_USER
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_PORT
+        - name: DB_PASSWORD
+          value: "xinjie"
+        command:
+        - sh
+        - -c
+        - python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 200m
+            memory: 200Mi
+---
+# Source: django-chart/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-app
+  namespace: u-cptz2
+spec:
+  rules:
+  - host: django.girls.csc8567.luxbulb.org
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
+      - path: /public
+        pathType: Prefix
+        backend:
+          service:
+            name: public-service
+            port:
+              number: 80
+      - path: /static
+        pathType: Prefix
+        backend:
+          service:
+            name: public-service
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - django.girls.csc8567.luxbulb.org
+    secretName: tls-secret
+---
+# Source: django-chart/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "django-girls-django-chart-test-connection"
+  labels:
+    helm.sh/chart: django-chart-0.1.0
+    app.kubernetes.io/name: django-chart
+    app.kubernetes.io/instance: django-girls
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['django-girls-django-chart:80']
+  restartPolicy: Never
