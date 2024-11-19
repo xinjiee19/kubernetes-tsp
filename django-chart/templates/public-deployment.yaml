@@ -44,7 +44,10 @@ spec:
               name: db-config
               key: DB_PORT
         - name: DB_PASSWORD
-          value: "{{ .Values.database.password }}"
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: DB_PASSWORD
         command:
         - sh
         - -c
