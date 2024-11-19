@@ -27,3 +27,19 @@ spec:
       port: 80
       targetPort: 8000
   type: ClusterIP
+---
+# DB Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.deployments.db.serviceName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Values.deployments.db.appLabel }}
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
+

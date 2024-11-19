@@ -37,6 +37,19 @@ deployments:
         memory: "200Mi"
     serviceName: public-service  
 
+  db:
+    name: db-deploy
+    appLabel: postgres
+    replicas: 1
+    image: postgres:13
+    serviceName: db-service
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "100Mi"
+      limits:
+        cpu: "200m"
+        memory: "200Mi"
 ingress:
   name: ingress-app
   host: django.girls.csc8567.luxbulb.org

@@ -8,4 +8,5 @@ data:
   DB_USER: "{{ .Values.database.user }}"
   DB_HOST: "{{ .Values.database.host }}"
   DB_PORT: "{{ .Values.database.port }}"
+  DB_PASSWORD: "{{ .Values.database.password }}"
  
