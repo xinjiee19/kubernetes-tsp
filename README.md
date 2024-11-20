@@ -20,7 +20,7 @@ Lister les pods en cours d'exécutions dans un cluster :
 kubectl get pods -n u-cptz2        
 ```
 
-## Merci de télécharger le document PDF pour voir les étapes et les résultats de chaque défi. 
+## Merci de télécharger le document PDF pour voir les étapes et les résultats de chaque défi ! 
 
 
 
