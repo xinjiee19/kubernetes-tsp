@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: public-deploy
+  name: public-deployment
   namespace: u-cptz2
 spec:
   replicas: 3
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: public-container
-        image: xinjie19/kubepub:v5
+        image: xinjie19/kubepub:v6
         env:
         - name: DB_NAME
           value: "todolist"           # Nom de la base de données

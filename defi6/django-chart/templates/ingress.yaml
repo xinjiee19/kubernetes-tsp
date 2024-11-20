@@ -29,6 +29,15 @@ spec:
             name: {{ .Values.deployments.public.serviceName }}
             port:
               number: 80
+      - path: /admin
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Values.deployments.public.serviceName }}
+            port:
+              number: 80
+
+        
   tls:
   - hosts:
     - {{ .Values.ingress.host }}
